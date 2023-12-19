@@ -1,18 +1,15 @@
 package com.by.petrfeldsherov.indprogr.ui;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.DirectoryIteratorException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import com.by.petrfeldsherov.indprogr.exception.InvalidInputException;
-import com.by.petrfeldsherov.indprogr.parser.AlgebraicExpressionsFileParser;
+import com.by.petrfeldsherov.indprogr.proceeder.FileProceeder;
 
 public class MainConsole {
 
@@ -29,30 +26,24 @@ public class MainConsole {
 
 	    FormatType srcFormat = null;
 	    FormatType destFormat = null;
-	    List<Path> pathesToParse = null;
+	    List<File> filesToParse = null;
 	    Boolean zipFlag = null;
 	    Boolean cipherFlag = null;
 	    try {
-		srcFormat = getFormatType(arguments[1]);
-		destFormat = getFormatType(arguments[2]);
-		pathesToParse = listPathesToParse(arguments[0], srcFormat);
 		zipFlag = getFlagValue(arguments[3]);
 		cipherFlag = getFlagValue(arguments[4]);
+		srcFormat = getFormatType(arguments[1]);
+		destFormat = getFormatType(arguments[2]);
+		filesToParse = listFilesToParse(arguments[0], srcFormat, zipFlag);
 	    } catch (InvalidInputException e) {
 		System.out.println(e.getMessage() + " Invalid value is \"" + e.getInvalidValue() + "\".");
 		continue;
-	    } catch (DirectoryIteratorException e) {
-		System.out.println(e.getMessage());
-		continue;
-	    } catch (IOException e) {
-		System.out.println(e.getMessage());
-		continue;
 	    }
 
-	    AlgebraicExpressionsFileParser aefp = new AlgebraicExpressionsFileParser(pathesToParse, srcFormat,
-		    destFormat, zipFlag, cipherFlag);
+	    FileProceeder fp = new FileProceeder(filesToParse, srcFormat,
+		    destFormat, cipherFlag);
 	    try {
-		aefp.parseProvidedFiles();
+		fp.proceedFiles();
 	    } catch (UnsupportedOperationException e) {
 		System.out.println(e.getMessage());
 	    }
@@ -93,53 +84,39 @@ public class MainConsole {
 	throw new InvalidInputException("Invalid format provided.", formatArgument);
     }
 
-    private static List<Path> listPathesToParse(String absolutePathname, FormatType srcFormat)
-	    throws InvalidInputException, DirectoryIteratorException, IOException {
-	Path path = Paths.get(absolutePathname);
-	List<Path> result = new ArrayList<>();
+    private static List<File> listFilesToParse(String absolutePathname, FormatType srcFormat, Boolean zipFlag)
+	    throws InvalidInputException {
+	File f = new File(absolutePathname);
+	List<File> result = new ArrayList<>();
 
-	if (!Files.exists(path)) {
-	    throw new InvalidInputException("Provided doesn't exist.", absolutePathname);
-	} else if (!path.isAbsolute()) {
+	if (!f.exists()) {
+	    throw new InvalidInputException("No file exist with provided pathname.", absolutePathname);
+	} else if (!f.isAbsolute()) {
 	    throw new InvalidInputException("Provided path isn't absolute.", absolutePathname);
 	}
 
-	if (Files.isRegularFile(path)) {
-	    if (!Files.isReadable(path)) {
+	if (f.isFile()) {
+	    if (!f.canRead()) {
 		throw new InvalidInputException("The file to which path is provided isn't readable.", absolutePathname);
-	    } else if (!path.endsWith("." + srcFormat.getFormatSuffix())) {
+	    } else if (!f.getName().endsWith("." + srcFormat.getFormatSuffix())) {
 		throw new InvalidInputException("The file to which path is provided doesn't correspond srcFormat.",
 			absolutePathname);
 	    }
-
-	    result.add(path);
-	    return result;
+	    result.add(f);
 	} else {
-	    DirectoryStream<Path> stream = null;
-	    try {
-		stream = Files.newDirectoryStream(path, "*[.]" + srcFormat.getFormatSuffix()); // {$srcFormat, zip} или же прямо тут в UI модуле отдельно зипы просмотреть: для каждого с суффиксом зип рекурсивно по названию и добавить раззипованные файлы если они нужного формата, тогда флаг зип отрабатывает в этом модуле и класс наш можно и вовсе сделать с параметрами по умолчанию, только как проверить что раззипованный файл удовлетворяет формату... короче пока что неясно
-		for (Path entry : stream) {
-		    result.add(entry);
-		}
-		if (result.isEmpty()) {
-		    throw new InvalidInputException(
-			    "The directory to which path is provided doesn't contain any files of srcFormat.",
-			    absolutePathname);
-		}
-	    } catch (DirectoryIteratorException e) {
-		throw e.getCause();
-	    } finally {
-		try {
-		    if (stream != null) {
-			stream.close();
-		    }
-		} catch (IOException e) {
-		    throw e;
+	    for (File file : f.listFiles()) {
+		if (file.exists() && file.isFile() && file.getName().endsWith("." + srcFormat.getFormatSuffix())) {
+		    result.add(file);
 		}
 	    }
-
-	    return result;
+	    if (result.isEmpty()) {
+		throw new InvalidInputException(
+			"The directory to which path is provided doesn't contain any files of srcFormat.",
+			absolutePathname);
+	    }
 	}
+	
+	return result;
     }
 
     private static Boolean getFlagValue(String flagArgument) throws InvalidInputException {
