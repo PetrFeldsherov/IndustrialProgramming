@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.by.petrfeldsherov.indprogr.exception.InvalidInputException;
-import com.by.petrfeldsherov.indprogr.proceeder.FileProceeder;
+import com.by.petrfeldsherov.indprogr.proceeder.Proceeder;
 
 public class MainConsole {
 
@@ -40,10 +40,9 @@ public class MainConsole {
 		continue;
 	    }
 
-	    FileProceeder fp = new FileProceeder(filesToParse, srcFormat,
-		    destFormat, cipherFlag);
 	    try {
-		fp.proceedFiles();
+		Proceeder proceeder = new Proceeder(filesToParse, srcFormat, destFormat, cipherFlag);
+		proceeder.proceedFiles();
 	    } catch (UnsupportedOperationException e) {
 		System.out.println(e.getMessage());
 	    }
@@ -115,7 +114,7 @@ public class MainConsole {
 			absolutePathname);
 	    }
 	}
-	
+
 	return result;
     }
 
