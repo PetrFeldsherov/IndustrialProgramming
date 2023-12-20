@@ -1,59 +1,74 @@
-package com.by.petrfeldsherov.indprogr.calculator;
+package com.by.petrfeldsherov.indprogr.model;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.by.petrfeldsherov.indprogr.parsing.AlgExprRegex;
 import com.by.petrfeldsherov.indprogr.ui.FormatType;
 
-public class AlgebraicExpression {
+public class Expression {
     private String expression;
-    private String trimmedExpression;
     private String valuesFormatedString;
-    private Double calculationResult = null;
-    private HashMap<Character, Double> valuesOfVariables;
-    private AlgExprValidator validator;
-    private AlgExprCalculator calculator;
+    private HashMap<Character, Double> values;
+    private Validator validator;
+    private Calculator calculator;
 
-    public AlgebraicExpression(String expression, String valuesFormatedString) {
+    public static String toConditionNode(Expression expr, FormatType srcFormat) throws UnsupportedOperationException {
+	throw new UnsupportedOperationException("The method toConditionNode is not yet implemented.");
+    }
+
+    public static String toResultNode(Expression expr, FormatType destFormat) throws UnsupportedOperationException {
+	throw new UnsupportedOperationException("The method toResultsNode is not yet implemented.");
+    }
+
+    public Expression(String expression, String valuesFormatedString) {
 	this.expression = expression;
-	trimmedExpression = expression.trim();
 	this.valuesFormatedString = valuesFormatedString;
-	setValuesOfVaribles();
+
+	setValues(replaceWhitespace(valuesFormatedString));
+
+	String noWhitespaceExpression = replaceWhitespace(expression);
+	validator = new Validator(noWhitespaceExpression, values);
+	if (isValid()) {
+	    calculator = new Calculator(noWhitespaceExpression, values);
+	}
     }
 
     public String getExpression() {
 	return expression;
     }
 
+    public String getValuesFormatedString() {
+	return valuesFormatedString;
+    }
+
     public Boolean isValid() {
-	validator = new AlgExprValidator(expression, valuesOfVariables);
 	return validator.isValid();
     }
 
-    public Double getResult() {
-	if (calculationResult == null) {
-	    calculator = new AlgExprCalculator(expression, valuesOfVariables);
-	    calculationResult = calculator.calculate();
+    public Double getResult() throws NullPointerException {
+	if (!isValid()) {
+	    throw new NullPointerException("Expression is invalid, no calculations were done.");
 	}
-	return calculationResult;
+	return calculator.getCalculationResult();
     }
 
-    private void setValuesOfVaribles() {
-	throw new UnsupportedOperationException("The method is not yet implemented.");
-	// TODO parse String with val=double; regex is ... , algorithm is match, check
-	// unary +, get value, get double, make String with no symbols, if some
-	// additional chacacters left in it - OddSymbols in values exception custom,
-	// only name message and what is left required - throw invalid argument ot
-	// something else doesn't matter
+    private void setValues(String valuesFormatedString) {
+	values = new HashMap<Character, Double>();
+	Pattern pattern = Pattern.compile(AlgExprRegex.VALUE.getRegex());
+	Matcher matcher = pattern.matcher(valuesFormatedString);
+	int lastMatchPos = 0;
+	while (matcher.find()) {
+	    values.put(matcher.group(1).charAt(0), Double.parseDouble(matcher.group(3)));
+	    lastMatchPos = matcher.end();
+	}
+	if (lastMatchPos != valuesFormatedString.length())
+	    System.out.println("Invalid string!");
     }
 
-    public String toConditionNode(FormatType srcFormat) {
-	// TODO Auto-generated method stub
-	return null;
-    }
-
-    public String toResultNode(FormatType srcFormat) {
-	// TODO Auto-generated method stub
-	return null;
+    private String replaceWhitespace(String s) {
+	return s.replaceAll("\\s", "");
     }
 
 }

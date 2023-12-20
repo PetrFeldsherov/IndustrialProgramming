@@ -1,20 +1,20 @@
-package com.by.petrfeldsherov.indprogr.proceederhelpers;
+package com.by.petrfeldsherov.indprogr.parsing;
 
 import java.util.Queue;
 
-import com.by.petrfeldsherov.indprogr.calculator.AlgebraicExpression;
+import com.by.petrfeldsherov.indprogr.model.Expression;
 import com.by.petrfeldsherov.indprogr.proceeder.AlgExprWriter;
 
-public class JsonAlgExprWriter implements AlgExprWriter {
+public class JsonWriter implements AlgExprWriter {
 
     @Override
-    public void writeToFile(String destFilename, Queue<AlgebraicExpression> algebraicExpressions) {
+    public void writeExpressionsToFile(String destFilename, Queue<Expression> algebraicExpressions) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void writeToFile(String destFilename, String fileInfoAsText) {
+    public void writeStrInfoToFile(String destFilename, String fileInfoAsStr) {
 	// TODO Auto-generated method stub
 
     }

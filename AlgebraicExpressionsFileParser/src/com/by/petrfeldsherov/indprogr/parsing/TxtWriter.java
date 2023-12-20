@@ -1,22 +1,33 @@
-package com.by.petrfeldsherov.indprogr.proceederhelpers;
+package com.by.petrfeldsherov.indprogr.parsing;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Queue;
 
-import com.by.petrfeldsherov.indprogr.calculator.AlgebraicExpression;
+import com.by.petrfeldsherov.indprogr.model.Expression;
 import com.by.petrfeldsherov.indprogr.proceeder.AlgExprWriter;
 
-public class TxtAlgExprWriter implements AlgExprWriter {
+public class TxtWriter implements AlgExprWriter {
 
     @Override
-    public void writeToFile(String destFilename, Queue<AlgebraicExpression> algebraicExpressions) {
-	// TODO Auto-generated method stub
+    public void writeExpressionsToFile(String destFilename, Queue<Expression> algebraicExpressions) {
+	// TODO write header, foreach write node via to formatted node method of
+	// Expression, write footer
 
     }
 
     @Override
-    public void writeToFile(String destFilename, String fileInfoAsText) {
-	// TODO Auto-generated method stub
-
+    public void writeStrInfoToFile(String destFilename, String fileInfoAsStr) {
+	PrintWriter out = null;
+	try {
+	    out = new PrintWriter(destFilename); // неверно, надо сначала создать файл, также это не бинарное, надо бы уточнить условие задачи что-ли
+	    out.println(fileInfoAsStr);
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} finally {
+	    if (out != null) {
+		out.close();
+	    }
+	}
     }
-
 }

@@ -1,11 +1,12 @@
-package com.by.petrfeldsherov.indprogr.calculator;
+package com.by.petrfeldsherov.indprogr.model;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-public class AlgExprCalculator {
+public class Calculator {
 
+    private Double calculationResult = null;
     private String postfixExpressionForm;
     Map<Character, Double> valuesOfVariables;
     @SuppressWarnings("serial")
@@ -21,14 +22,57 @@ public class AlgExprCalculator {
 	}
     };
 
-    public AlgExprCalculator(String infixExpressionForm, Map<Character, Double> valuesOfVariables) {
+    public Calculator(String infixExpressionForm, Map<Character, Double> valuesOfVariables) {
 	postfixExpressionForm = toPostfixForm(infixExpressionForm);
 	this.valuesOfVariables = valuesOfVariables;
+	calculate();
     }
 
-    public Double calculate() {
+    public Double getCalculationResult() {
+        return calculationResult;
+    }
+
+    private String toPostfixForm(String infixExpressionForm) {
+        StringBuilder postfixForm = new StringBuilder();
+        Stack<Character> stack = new Stack<Character>();
+    
+        for (int i = 0; i < infixExpressionForm.length(); i++) {
+            Character c = infixExpressionForm.charAt(i);
+    
+            if (Character.isDigit(c)) {
+        	postfixForm.append(getDoubleStr(infixExpressionForm, i));
+            } else if (isVariable(c)) {
+        	postfixForm.append(c);
+            } else if (c.equals('(')) {
+        	stack.push(c);
+            } else if (c.equals(')')) {
+        	while (!stack.isEmpty() && !stack.peek().equals('(')) {
+        	    postfixForm.append(stack.pop());
+        	}
+        	stack.pop();
+            } else if (isOperator(c)) {
+        	Character op = c;
+    
+        	if (isUnary(op, infixExpressionForm, i)) {
+        	    op = '~';
+        	}
+    
+        	while (!stack.isEmpty() && operatorPriorities.get(stack.peek()) >= operatorPriorities.get(op)) {
+        	    postfixForm.append(stack.pop());
+        	}
+        	stack.push(op);
+            }
+        }
+    
+        for (Character op : stack) {
+            postfixForm.append(op);
+        }
+    
+        return postfixForm.toString();
+    }
+
+    private void calculate() {
 	Stack<Double> values = new Stack<Double>();
-	@SuppressWarnings("unused")
 	int operationsCounter = 0;
 
 	for (int i = 0; i < postfixExpressionForm.length(); i++) {
@@ -50,49 +94,12 @@ public class AlgExprCalculator {
 		double second = getNotEmpty(values);
 		double first = getNotEmpty(values);
 		values.push(getOperationResult(c, first, second));
+		
+		System.out.println(operationsCounter + ") " + first + " " + c + " " + second + " = " + values.peek());
 	    }
 	}
 
-	return values.pop();
-    }
-
-    private String toPostfixForm(String infixExpressionForm) {
-	StringBuilder postfixForm = new StringBuilder();
-	Stack<Character> stack = new Stack<Character>();
-
-	for (int i = 0; i < infixExpressionForm.length(); i++) {
-	    Character c = infixExpressionForm.charAt(i);
-
-	    if (Character.isDigit(c)) {
-		postfixForm.append(getDoubleStr(infixExpressionForm, i));
-	    } else if (isVariable(c)) {
-		postfixForm.append(c);
-	    } else if (c.equals('(')) {
-		stack.push(c);
-	    } else if (c.equals(')')) {
-		while (!stack.isEmpty() && !stack.firstElement().equals('(')) {
-		    postfixForm.append(stack.pop());
-		}
-		stack.pop();
-	    } else if (isOperator(c)) {
-		Character op = c;
-
-		if (isUnary(op, infixExpressionForm, i)) {
-		    op = '~';
-		}
-
-		while (!stack.isEmpty() && operatorPriorities.get(stack.firstElement()) >= operatorPriorities.get(op)) {
-		    postfixForm.append(stack.pop());
-		}
-		stack.push(op);
-	    }
-	}
-
-	for (Character op : stack) {
-	    postfixForm.append(op);
-	}
-
-	return postfixForm.toString();
+	calculationResult = values.pop();
     }
 
     private String getDoubleStr(String infixExpressionForm, int i) {
@@ -134,7 +141,7 @@ public class AlgExprCalculator {
 	case '^':
 	    return Math.pow(first, second);
 	default:
-	    throw new IllegalArgumentException("Invalid operator provided.");
+	    return 0.0; // throw new IllegalArgumentException("Invalid operator provided.");
 	}
     }
 

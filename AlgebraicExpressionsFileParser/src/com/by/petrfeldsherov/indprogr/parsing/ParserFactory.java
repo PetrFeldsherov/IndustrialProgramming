@@ -1,22 +1,22 @@
-package com.by.petrfeldsherov.indprogr.proceederhelpers;
+package com.by.petrfeldsherov.indprogr.parsing;
 
 import com.by.petrfeldsherov.indprogr.proceeder.AlgExprParser;
 import com.by.petrfeldsherov.indprogr.ui.FormatType;
 
-public class AlgExprParserFactory {
+public class ParserFactory {
 
     public static AlgExprParser createAlgExprParser(FormatType srcFormatType) {
 	AlgExprParser parser = null;
 
 	switch (srcFormatType) {
 	case TXT:
-	    parser = new TxtAlgExprParser();
+	    parser = new TxtParser();
 	    break;
 	case XML:
-	    parser = new XmlAlgExprParser();
+	    parser = new XmlParser();
 	    break;
 	case JSON:
-	    parser = new JsonAlgExprParser();
+	    parser = new JsonParser();
 	    break;
 	}
 

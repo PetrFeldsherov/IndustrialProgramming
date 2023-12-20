@@ -1,22 +1,22 @@
-package com.by.petrfeldsherov.indprogr.proceederhelpers;
+package com.by.petrfeldsherov.indprogr.parsing;
 
 import com.by.petrfeldsherov.indprogr.proceeder.AlgExprWriter;
 import com.by.petrfeldsherov.indprogr.ui.FormatType;
 
-public class AlgExprWriterFactory {
+public class WriterFactory {
 
     public static AlgExprWriter createAlgExprWriter(FormatType destFormatType) {
 	AlgExprWriter writer = null;
 	
 	switch (destFormatType) {
 	case TXT:
-	    writer = new TxtAlgExprWriter();
+	    writer = new TxtWriter();
 	    break;
 	case XML:
-	    writer = new XmlAlgExprWriter();
+	    writer = new XmlWriter();
 	    break;
 	case JSON:
-	    writer = new JsonAlgExprWriter();
+	    writer = new JsonWriter();
 	    break;
 	}
 	
