@@ -40,7 +40,9 @@ public class Calculator {
             Character c = infixExpressionForm.charAt(i);
     
             if (Character.isDigit(c)) {
-        	postfixForm.append(getDoubleStr(infixExpressionForm, i));
+        	String parsedDouble = getDoubleStr(infixExpressionForm, i);
+        	postfixForm.append(parsedDouble + " ");
+        	i += parsedDouble.length() - 1;
             } else if (isVariable(c)) {
         	postfixForm.append(c);
             } else if (c.equals('(')) {
@@ -64,8 +66,8 @@ public class Calculator {
             }
         }
     
-        for (Character op : stack) {
-            postfixForm.append(op);
+        while (!stack.isEmpty()) {
+            postfixForm.append(stack.pop());
         }
     
         return postfixForm.toString();
@@ -79,7 +81,9 @@ public class Calculator {
 	    Character c = postfixExpressionForm.charAt(i);
 
 	    if (Character.isDigit(c)) {
-		values.push(Double.parseDouble(getDoubleStr(postfixExpressionForm, i)));
+		String parsedDouble = getDoubleStr(postfixExpressionForm, i);
+		values.push(Double.parseDouble(parsedDouble));
+		i += parsedDouble.length();
 	    } else if (isVariable(c)) {
 		values.push(valuesOfVariables.get(c));
 	    } else if (isOperator(c)) {
@@ -120,6 +124,8 @@ public class Calculator {
 	    } else {
 		break;
 	    }
+	    
+	    i++;
 	}
 
 	return doubleStr.toString();
