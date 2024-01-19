@@ -45,6 +45,8 @@ public class MainConsole {
 		proceeder.proceedFiles();
 	    } catch (UnsupportedOperationException e) {
 		System.out.println(e.getMessage());
+	    } catch (IOException e) {
+		e.printStackTrace();
 	    }
 	    System.out.println("Parsing for " + Arrays.toString(arguments) + " is completed.");
 	}
@@ -52,9 +54,11 @@ public class MainConsole {
 
     private static void appInfo() {
 	System.out.println(
-		"Parses <srs format> files located at <abs path for parcing>, which may be either filepath or dirpath.\n"
-			+ "Stores the results in <dest format> files created in that same directory.\n"
-			+ "<zip> and <cipher> flags correspond to the searching for archived or ciphered files in addition common ones.");
+		"Proceeds <src format> files located at <abs path for proceeding>\n\t\twhich may be either path to a file or directory path.\n"
+			+ "Replaces algebraic expressions with their results if <dest format> is txt"
+			+ "\n\t\tor if <dest format> = <src format>.\nJust outputs calculation results otherwise.\n\t\t"
+			+ "Results are stored in <dest format> files created in src directory.\n"
+			+ "<zip> and <cipher> flags correspond to the proceeding archived and ciphered files.\n\n");
     }
 
     private static void usage() {

@@ -2,7 +2,7 @@ package com.by.petrfeldsherov.indprogr.parsing;
 
 public enum Tag {
 
-    MATH_NODE("math"), EXPRESSION_PART("expression"), VALUES_PART("values");
+    MATH("math"), EXPR("expression"), VAL("values"), RES("result");
 
     private String tagName;
 
@@ -10,7 +10,7 @@ public enum Tag {
 	this.tagName = tagName;
     }
 
-    public String getTagName() {
+    public String str() {
 	return tagName;
     }
 

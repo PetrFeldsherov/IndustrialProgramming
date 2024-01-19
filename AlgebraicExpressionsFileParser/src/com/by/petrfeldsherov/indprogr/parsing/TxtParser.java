@@ -32,7 +32,7 @@ public class TxtParser implements AlgExprParser {
     }
 
     private boolean isExpression(String line) {
-	return line.matches(AlgExprRegex.AlGEXPR_ALPHABET.getRegex() + ";" + AlgExprRegex.VALUES.getRegex());
+	return line.matches(AlgExprRegex.AlGEXPR_ALPHABET.str() + ";" + AlgExprRegex.VALUES.str());
     }
 
     private String expressionPart(String line) {

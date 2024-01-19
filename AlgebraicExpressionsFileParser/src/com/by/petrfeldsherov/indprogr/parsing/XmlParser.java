@@ -27,7 +27,7 @@ public class XmlParser implements AlgExprParser {
 	    throw new ParsingException(e.getMessage(), FormatType.XML, f);
 	}
 
-	NodeList mathNodes = doc.getElementsByTagName(Tag.MATH_NODE.getTagName());
+	NodeList mathNodes = doc.getElementsByTagName(Tag.MATH.str());
 	for (int i = 0; i < mathNodes.getLength(); i++) {
 	    NodeList mathNodeContent = mathNodes.item(i).getChildNodes();
 
@@ -50,19 +50,19 @@ public class XmlParser implements AlgExprParser {
 		continue;
 	    }
 
-	    if (mathNodeContent.item(i).getNodeName() == Tag.EXPRESSION_PART.getTagName()) {
+	    if (mathNodeContent.item(i).getNodeName() == Tag.EXPR.str()) {
 		expressionPart = mathNodeContent.item(i).getTextContent();
-	    } else if (mathNodeContent.item(i).getNodeName() == Tag.VALUES_PART.getTagName()) {
+	    } else if (mathNodeContent.item(i).getNodeName() == Tag.VAL.str()) {
 		valuesPart = mathNodeContent.item(i).getTextContent();
 	    }
 	}
 
 	if (expressionPart == null || valuesPart == null) {
 	    throw new NullPointerException(
-		    "Either expression part or values part is null in the " + Tag.MATH_NODE.getTagName() + " node.");
+		    "Either expression part or values part is null in the " + Tag.MATH.str() + " node.");
 	}
 
-	return new Expression(expressionPart, valuesPart);
+	return new Expression(expressionPart.substring(0, expressionPart.length() - 1), valuesPart);
     }
 
 }

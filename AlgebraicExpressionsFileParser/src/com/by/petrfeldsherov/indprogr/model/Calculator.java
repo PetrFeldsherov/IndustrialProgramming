@@ -99,7 +99,7 @@ public class Calculator {
 		double first = getNotEmpty(values);
 		values.push(getOperationResult(c, first, second));
 		
-		System.out.println(operationsCounter + ") " + first + " " + c + " " + second + " = " + values.peek());
+//		System.out.println(operationsCounter + ") " + first + " " + c + " " + second + " = " + values.peek());
 	    }
 	}
 

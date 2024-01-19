@@ -103,7 +103,7 @@ public class ValidationInstruments {
     }
 
     public static String replaceConstants(String expr) {
-	return expr.replaceAll(AlgExprRegex.POSITIVE_DOUBLE.getRegex(), CONSTANTS_REPLACEMENT);
+	return expr.replaceAll(AlgExprRegex.POSITIVE_DOUBLE.str(), CONSTANTS_REPLACEMENT);
     }
 
     public static int getClosingBracketPos(StringBuilder sb, int i) {
@@ -132,11 +132,11 @@ public class ValidationInstruments {
     }
 
     public static boolean isVariable(Character c) {
-	return c.toString().matches(AlgExprRegex.VARIABLE.getRegex()) || c.toString().equals(CONSTANTS_REPLACEMENT);
+	return c.toString().matches(AlgExprRegex.VARIABLE.str()) || c.toString().equals(CONSTANTS_REPLACEMENT);
     }
 
     public static boolean isDouble(String s) {
-	return s.matches(AlgExprRegex.DOUBLE.getRegex());
+	return s.matches(AlgExprRegex.DOUBLE.str());
     }
 
 }
